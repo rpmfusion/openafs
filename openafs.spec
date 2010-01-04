@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.4.11
-Release:        9%{?dist}
+Release:        10%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -24,7 +24,7 @@ Source3:        openafs.init
 Source4:        afs.conf
 
 BuildRoot:      %{_tmppath}/%{name}-root
-BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc
+BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -276,6 +276,9 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 04 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.11-10
+- Add a BuildRequires for bison to build on PPC
+
 * Tue Nov 03 2009 Jack Neely <jjneely@ncsu.edu> 0:1.4.11-9
 - Remove the epoch tags as they are generally not accepted by the
   Fedora Packaging Guidelines
