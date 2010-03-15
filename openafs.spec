@@ -12,8 +12,8 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.4.11
-Release:        10%{?dist}
+Version:        1.4.12
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -137,12 +137,6 @@ install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 # Include kpasswd as kpasswd.kas so I can change my admin tokens
 mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kpasswd.kas
 
-# compile_et is built as part of OpenAFS's libcom_err internal
-# implementation.  Its not needed after the initial build and
-# will cause an RPM file conflict with the system version from 
-# e2fsprogs.
-rm -f ${RPM_BUILD_ROOT}/usr/bin/compile_et
-
 # No static libraries
 rm -f ${RPM_BUILD_ROOT}%{_libdir}/lib*.a
 rm -fr ${RPM_BUILD_ROOT}%{_libdir}/afs
@@ -265,6 +259,7 @@ rm -fr $RPM_BUILD_ROOT
 %files devel
 %defattr(-,root,root)
 %{_bindir}/rxgen
+%{_bindir}/afs_compile_et
 %{_includedir}/afs
 %{_includedir}/rx
 %{_includedir}/*.h
@@ -276,6 +271,11 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Mar 15 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12-1
+- Update to OpenAFS 1.4.12
+- OpenAFS has moved compile_et to afs_compile_et so that it
+  can be safely included without causing package conflicts
+
 * Mon Jan 04 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.11-10
 - Add a BuildRequires for bison to build on PPC
 
