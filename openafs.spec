@@ -13,15 +13,16 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.4.12.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
 Source0:        http://www.openafs.org/dl/openafs/1.4.12/%{name}-%{version}-src.tar.bz2
-Source1:        CellServDB
-Source2:        cacheinfo
-Source3:        openafs.init
-Source4:        afs.conf
+Source1		http://www.openafs.org/dl/openafs/1.4.12}/openafs-%{version}-doc.tar.bz2
+Source11:        CellServDB
+Source12:        cacheinfo
+Source13:        openafs.init
+Source14:        afs.conf
 
 BuildRoot:      %{_tmppath}/%{name}-root
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
@@ -86,7 +87,7 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -n openafs-%{version}
+%setup -q -b 1 -n openafs-%{version}
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -100,10 +101,15 @@ buildIt() {
 ./regen.sh
 
 # build the user-space bits for base architectures
-    %configure \
+    ./configure \
+        --prefix=%{_prefix} \
+        --libdir=%{_libdir} \
+        --bindir=%{_bindir} \
+        --sbindir=%{_sbindir} \
         --with-afs-sysname=%{sysname} \
         --with-linux-kernel-headers=%{ksource_dir} \
         --disable-kernel-module \
+        --disable-strip-binaries \
         --with-krb5-conf=/usr/kerberos/bin/krb5-config
 
     # Build is not SMP compliant
@@ -119,17 +125,17 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 # install config info
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
-install -p -m 644 %{SOURCE1} ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
-install -p -m 644 %{SOURCE2} ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
+install -p -m 644 %{SOURCE11} ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
+install -p -m 644 %{SOURCE12} ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
 echo %{thiscell} > ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/ThisCell
 
 # install the init script
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d
-install -m 755 %{SOURCE3} ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d/openafs
+install -m 755 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d/openafs
 
 # sysconfig file
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig
-install -m 644 %{SOURCE4} ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig/openafs
+install -m 644 %{SOURCE14} ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig/openafs
 
 # Include the vlclient binary
 install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
@@ -151,6 +157,21 @@ mv ${RPM_BUILD_ROOT}%{_libdir}/pam_afs.so.1 \
 # Remove utilities related to DCE
 rm -f ${RPM_BUILD_ROOT}/usr/bin/dlog
 rm -f ${RPM_BUILD_ROOT}/usr/bin/dpass
+
+# Install man pages
+tar cf - -C doc/man-pages man1 man5 man8 | \
+    tar xf - -C $RPM_BUILD_ROOT%{_mandir}
+
+# remove unused man pages
+for x in afs_ftpd afs_inetd afs_login afs_rcp afs_rlogind afs_rsh \
+    dkload knfs package runntp symlink symlink_list symlink_make \
+    symlink_remove; do
+        rm -f $RPM_BUILD_ROOT%{_mandir}/man1/${x}.1
+done
+
+# rename man page kpasswd to kapasswd
+mv $RPM_BUILD_ROOT%{_mandir}/man1/kpasswd.1 \
+   $RPM_BUILD_ROOT%{_mandir}/man1/kapasswd.1
 
 # don't restart in %post because kernel modules could well have changed
 %post
@@ -218,6 +239,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/libafsrpc.so.*
 %{_libdir}/libafssetpag.so.*
 /%{_lib}/security/*.so
+%{_mandir}/man1/*
+%{_mandir}/man5/*
+%{_mandir}/man8/*
 
 %files client
 %defattr(-, root, root)
@@ -271,6 +295,11 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jun 16 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-2
+- RPMFusion Bug #1274 - OpenAFS wont start without an IP address
+- RPMFusion Bug #1277 - Include OpenAFS man pages
+- Avoid using the rpm configure macro and call configure directly
+
 * Thu May 27 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-1
 - Build for F-13
 - Port forward to 1.4.12.1

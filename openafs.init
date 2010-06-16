@@ -74,25 +74,7 @@ is_on() {
 	fi
 }
 
-# do you actually have a usable network interface up?
-on_network() {
-    ADDRS=`ifconfig | grep 'inet addr' | grep -v 127.0.0.1 | wc -l`
-    if [ "$ADDRS" = "" ]; then
-       echo $"$0: No interfaces with IP address"
-       return 1
-    elif [ $ADDRS = 0 ]; then
-       echo $"$0: No interfaces with IP address"
-       return 1
-    fi
-    return 0
-}
-
 start() {
-    on_network
-    RETVAL=$?
-
-    [ $RETVAL -eq 0 ] || return $RETVAL
-
     # Load kernel module
     action $"Loading AFS kernel module: " /sbin/modprobe openafs 
     RETVAL=$?
