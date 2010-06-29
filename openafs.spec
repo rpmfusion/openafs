@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.4.12.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -184,6 +184,7 @@ fi
 # if this is owned by the package, upgrades with afs running can't work
 if [ ! -d /afs ] ; then
         mkdir -m 700 /afs
+        [ -x /sbin/restorecon ] && /sbin/restorecon /afs
 fi 
 exit 0
 
@@ -295,6 +296,10 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jun 29 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-3
+- RPMFusion Bug #1047 - Fix SELinux contexts on /afs
+- RPMFusion Bug #1275 - service openafs status now sets the exit code
+
 * Wed Jun 16 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-2
 - RPMFusion Bug #1274 - OpenAFS wont start without an IP address
 - RPMFusion Bug #1277 - Include OpenAFS man pages

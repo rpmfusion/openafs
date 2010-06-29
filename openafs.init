@@ -187,11 +187,8 @@ case "$1" in
 	fi
 	;;
     status)
-	if [ -f /var/lock/subsys/openafs ]; then
-	    echo $"AFS appears to be running"
-	else
-	    echo $"AFS does not appear to be running"
-	fi
+	status afsd
+	RETVAL=$?
 	;;
     *)
 	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
