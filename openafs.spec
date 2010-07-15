@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.4.12.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -106,6 +106,8 @@ buildIt() {
         --libdir=%{_libdir} \
         --bindir=%{_bindir} \
         --sbindir=%{_sbindir} \
+        --sysconfdir=%{_sysconfdir} \
+        --localstatedir=%{_var} \
         --with-afs-sysname=%{sysname} \
         --with-linux-kernel-headers=%{ksource_dir} \
         --disable-kernel-module \
@@ -296,6 +298,9 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jul 15 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-4
+- RPMFusion Bug #1333
+
 * Tue Jun 29 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-3
 - RPMFusion Bug #1047 - Fix SELinux contexts on /afs
 - RPMFusion Bug #1275 - service openafs status now sets the exit code
