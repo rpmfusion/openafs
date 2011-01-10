@@ -12,8 +12,8 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.4.12.1
-Release:        5%{?dist}
+Version:        1.4.14
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -298,6 +298,9 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jan 10 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-1
+- Build 1.4.14
+
 * Thu Nov 04 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-5
 - RHEL 6 doesn't have a "redhat-release" package and the afs.conf
   script that generates the sysnames needed correcting as it references
