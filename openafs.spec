@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.4.14
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -298,6 +298,11 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Mar 02 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-2
+- Update the CellServDB to the current list from
+  http://dl.central.org/dl/cellservdb/CellServDB
+- This addresses Bug #1646
+
 * Tue Jan 11 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-1
 - Build 1.4.14
 
