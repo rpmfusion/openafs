@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.4.14
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -112,7 +112,9 @@ buildIt() {
         --with-linux-kernel-headers=%{ksource_dir} \
         --disable-kernel-module \
         --disable-strip-binaries \
-        --with-krb5-conf=/usr/bin/krb5-config
+        --enable-supergroups  \
+        --with-krb5-conf=/usr/bin/krb5-config \
+        CCOBJ=-fPIC
 
     # Build is not SMP compliant
     make $RPM_OPT_FLGS all_nolibafs
@@ -144,10 +146,6 @@ install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 
 # Include kpasswd as kpasswd.kas so I can change my admin tokens
 mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kpasswd.kas
-
-# No static libraries
-rm -f ${RPM_BUILD_ROOT}%{_libdir}/lib*.a
-rm -fr ${RPM_BUILD_ROOT}%{_libdir}/afs
 
 # Put the PAM modules in a sane place
 mkdir -p ${RPM_BUILD_ROOT}/%{_lib}/security
@@ -295,9 +293,18 @@ rm -fr $RPM_BUILD_ROOT
 %{_libdir}/libafsauthent.so
 %{_libdir}/libafsrpc.so
 %{_libdir}/libafssetpag.so
+%{_libdir}/lib*.a
+%{_libdir}/afs
 
 
 %changelog
+* Mon Mar 07 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-3
+- rpmFusion Bug #1649
+- Include the static libraries in openafs-devel as they are required
+  for other tools to use the OpenAFS C APIs
+- Set CCOBJ=-fPIC so that the static libraries work properly in x86_64 land
+- Enable support for supergroups
+
 * Wed Mar 02 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-2
 - Update the CellServDB to the current list from
   http://dl.central.org/dl/cellservdb/CellServDB
