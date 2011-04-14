@@ -10,15 +10,17 @@
 %define sysname amd64_linux26
 %endif
 
+%define pre pre4
+
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.4.14
-Release:        3%{?dist}
+Version:        1.6.0
+Release:        0.%{pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}-src.tar.bz2
-Source1:        http://www.openafs.org/dl/openafs/%{version}/openafs-%{version}-doc.tar.bz2
+Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}%{pre}-src.tar.bz2
+Source1:        http://www.openafs.org/dl/openafs/%{version}%{pre}/openafs-%{version}%{pre}-doc.tar.bz2
 Source11:       CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -26,6 +28,7 @@ Source14:       afs.conf
 
 BuildRoot:      %{_tmppath}/%{name}-root
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
+BuildRequires:	automake
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -87,7 +90,7 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}
+%setup -q -b 1 -n openafs-%{version}%{pre}
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -206,7 +209,8 @@ rm -fr $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root, -)
-%doc src/LICENSE README NEWS README.OBSOLETE README.SECURITY
+%doc src/LICENSE README NEWS README.DEVEL README.GIT README.PTHREADED_UBIK
+%doc README.WARNINGS README-WINDOWS
 %config(noreplace) %{_sysconfdir}/sysconfig/*
 %{_sysconfdir}/rc.d/init.d/*
 %{_bindir}/aklog
@@ -223,6 +227,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/sys
 %{_bindir}/pagsh
 %{_bindir}/pagsh.krb
+%{_bindir}/restorevol
 %{_bindir}/tokens
 %{_bindir}/tokens.krb
 %{_bindir}/udebug
@@ -232,13 +237,12 @@ rm -fr $RPM_BUILD_ROOT
 %{_sbindir}/backup
 %{_sbindir}/butc
 %{_sbindir}/fstrace
-%{_sbindir}/restorevol
 %{_sbindir}/rxdebug
 %{_sbindir}/vos
 %{_sbindir}/kas
 %{_libdir}/libafsauthent.so.*
+%{_libdir}/libkopenafs.so.*
 %{_libdir}/libafsrpc.so.*
-%{_libdir}/libafssetpag.so.*
 /%{_lib}/security/*.so
 %{_mandir}/man1/*
 %{_mandir}/man5/*
@@ -262,12 +266,15 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/udebug
 %{_bindir}/xstat_fs_test
 %{_libexecdir}/openafs
+%{_sbindir}/dafssync-debug
+%{_sbindir}/fssync-debug
+%{_sbindir}/salvsync-debug
+%{_sbindir}/state_analyzer
 %{_sbindir}/bosserver
 %{_sbindir}/fms
 %{_sbindir}/prdb_check
 %{_sbindir}/pt_util
 %{_sbindir}/read_tape
-%{_sbindir}/restorevol
 %{_sbindir}/uss
 %{_sbindir}/vlclient
 %{_sbindir}/vldb_check
@@ -289,15 +296,17 @@ rm -fr $RPM_BUILD_ROOT
 %{_includedir}/rx
 %{_includedir}/*.h
 %{_sbindir}/vsys
-%{_sbindir}/kdump
 %{_libdir}/libafsauthent.so
 %{_libdir}/libafsrpc.so
-%{_libdir}/libafssetpag.so
+%{_libdir}/libkopenafs.so
 %{_libdir}/lib*.a
 %{_libdir}/afs
-
+%{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Apr 14 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre3
+- Update to OpenAFS 1.6.0 pre-release 4
+
 * Mon Mar 07 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-3
 - rpmFusion Bug #1649
 - Include the static libraries in openafs-devel as they are required
