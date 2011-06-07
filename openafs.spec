@@ -15,7 +15,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.0
-Release:        0.%{pre}%{?dist}
+Release:        0.1.%{pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -147,8 +147,8 @@ install -m 644 %{SOURCE14} ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig/openafs
 # Include the vlclient binary
 install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 
-# Include kpasswd as kpasswd.kas so I can change my admin tokens
-mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kpasswd.kas
+# Include kpasswd as kapasswd so I can change my admin tokens
+mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kapasswd
 
 # Put the PAM modules in a sane place
 mkdir -p ${RPM_BUILD_ROOT}/%{_lib}/security
@@ -220,7 +220,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/klog.krb
 %{_bindir}/klog.krb5
 %{_bindir}/knfs
-%{_bindir}/kpasswd.kas
+%{_bindir}/kapasswd
 %{_bindir}/kpwvalid
 %{_bindir}/livesys
 %{_bindir}/pts
@@ -304,7 +304,11 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
-* Thu Apr 14 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre3
+* Tue Jun 07 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.1.pre4
+- rpmFusion Bug # 1782
+- rename the kpasswd binary to kapasswd to match its man page
+
+* Thu Apr 14 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre4
 - Update to OpenAFS 1.6.0 pre-release 4
 
 * Mon Mar 07 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-3
