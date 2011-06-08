@@ -10,12 +10,12 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre4
+%define pre pre6
 
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.0
-Release:        0.1.%{pre}%{?dist}
+Release:        0.%{pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -304,6 +304,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Jun 08 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.1.pre6
+- Update to OpenAFS 1.6.0 pre-release 6
+
 * Tue Jun 07 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.1.pre4
 - rpmFusion Bug # 1782
 - rename the kpasswd binary to kapasswd to match its man page
