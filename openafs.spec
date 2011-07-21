@@ -315,6 +315,8 @@ rm -fr $RPM_BUILD_ROOT
 * Thu Jul 21 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7
 - Update to OpenAFS 1.6.0 pre-release 7
 - Rename /usr/sbin/backup to /usr/sbin/afsbackup rpmFusion Bug # 1727
+- Add the -fakestat option to the default options for afsd
+  rpmfusion Bug # 1837
 
 * Wed Jun 08 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.1.pre6
 - Update to OpenAFS 1.6.0 pre-release 6
