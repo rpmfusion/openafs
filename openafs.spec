@@ -150,6 +150,10 @@ install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 # Include kpasswd as kapasswd so I can change my admin tokens
 mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kapasswd
 
+# Rename /usr/bin/backup to not conflict with Coda 
+# (Future AFS upstream change)
+mv ${RPM_BUILD_ROOT}/usr/sbin/backup ${RPM_BUILD_ROOT}/usr/sbin/afsbackup
+
 # Put the PAM modules in a sane place
 mkdir -p ${RPM_BUILD_ROOT}/%{_lib}/security
 mv ${RPM_BUILD_ROOT}%{_libdir}/pam_afs.krb.so.1 \
@@ -175,6 +179,10 @@ done
 # rename man page kpasswd to kapasswd
 mv $RPM_BUILD_ROOT%{_mandir}/man1/kpasswd.1 \
    $RPM_BUILD_ROOT%{_mandir}/man1/kapasswd.1
+
+# rename backup man page to afsbackup
+mv $RPM_BUILD_ROOT%{_mandir}/man8/backup.8 \
+   $RPM_BUILD_ROOT%{_mandir}/man8/afsbackup.8
 
 # don't restart in post because kernel modules could well have changed
 %post
@@ -234,7 +242,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/unlog
 %{_bindir}/up
 %{_bindir}/translate_et
-%{_sbindir}/backup
+%{_sbindir}/afsbackup
 %{_sbindir}/butc
 %{_sbindir}/fstrace
 %{_sbindir}/rxdebug
@@ -306,6 +314,7 @@ rm -fr $RPM_BUILD_ROOT
 %changelog
 * Thu Jul 21 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7
 - Update to OpenAFS 1.6.0 pre-release 7
+- Rename /usr/sbin/backup to /usr/sbin/afsbackup rpmFusion Bug # 1727
 
 * Wed Jun 08 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.1.pre6
 - Update to OpenAFS 1.6.0 pre-release 6
