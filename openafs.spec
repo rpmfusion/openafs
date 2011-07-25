@@ -12,13 +12,13 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.4.14
-Release:        3%{?dist}
+Version:        1.4.14.1
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://www.openafs.org/dl/openafs/1.4.12/%{name}-%{version}-src.tar.bz2
-Source1:        http://www.openafs.org/dl/openafs/1.4.12/openafs-%{version}-doc.tar.bz2
+Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}-src.tar.bz2
+Source1:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}-doc.tar.bz2
 Source11:       CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -147,6 +147,10 @@ install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 # Include kpasswd as kpasswd.kas so I can change my admin tokens
 mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kpasswd.kas
 
+# Rename /usr/sbin/backup to /usr/sbin/afsbackup to not conflict with Coda
+# (Future AFS upstream change)
+mv ${RPM_BUILD_ROOT}/usr/sbin/backup ${RPM_BUILD_ROOT}/usr/sbin/afsbackup
+
 # Put the PAM modules in a sane place
 mkdir -p ${RPM_BUILD_ROOT}/%{_lib}/security
 mv ${RPM_BUILD_ROOT}%{_libdir}/pam_afs.krb.so.1 \
@@ -172,6 +176,9 @@ done
 # rename man page kpasswd to kapasswd
 mv $RPM_BUILD_ROOT%{_mandir}/man1/kpasswd.1 \
    $RPM_BUILD_ROOT%{_mandir}/man1/kapasswd.1
+
+# Create the cache directory
+install -d -m 700 $RPM_BUILD_ROOT%{_localstatedir}/cache/openafs
 
 # don't restart in post because kernel modules could well have changed
 %post
@@ -229,7 +236,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/unlog
 %{_bindir}/up
 %{_bindir}/translate_et
-%{_sbindir}/backup
+%{_sbindir}/afsbackup
 %{_sbindir}/butc
 %{_sbindir}/fstrace
 %{_sbindir}/restorevol
@@ -247,6 +254,7 @@ rm -fr $RPM_BUILD_ROOT
 %files client
 %defattr(-, root, root)
 %dir %{_sysconfdir}/openafs
+%dir %{_localstatedir}/cache/openafs
 %config(noreplace) %{_sysconfdir}/openafs/CellServDB
 %config(noreplace) %{_sysconfdir}/openafs/ThisCell
 %config(noreplace) %{_sysconfdir}/openafs/cacheinfo
@@ -298,6 +306,15 @@ rm -fr $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Jul 25 2011 Jack Neely <jjneely@ncsu.edu> 0.1.4.14.1-1
+- Updated to OpenAFS version 1.4.14.1
+- Populate cache directory even though we use memcache by default
+  rpmFusion Bug 1783
+- Add the -fakestat option to the default options for afsd
+  rpmFusion Bug 1837
+- rename /usr/sbin/backup to /usr/sbin/afsbackup
+  rpmFusion Bug 1727
+
 * Mon Mar 07 2011 Jack Neely <jjneely@ncsu.edu> 0:1.4.14-3
 - rpmFusion Bug #1649
 - Include the static libraries in openafs-devel as they are required
