@@ -15,7 +15,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.0
-Release:        0.%{pre}%{?dist}
+Release:        0.%{pre}.1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -184,6 +184,9 @@ mv $RPM_BUILD_ROOT%{_mandir}/man1/kpasswd.1 \
 mv $RPM_BUILD_ROOT%{_mandir}/man8/backup.8 \
    $RPM_BUILD_ROOT%{_mandir}/man8/afsbackup.8
 
+# Create the cache directory
+install -d -m 700 $RPM_BUILD_ROOT%{_localstatedir}/cache/openafs
+
 # don't restart in post because kernel modules could well have changed
 %post
 /sbin/ldconfig
@@ -259,6 +262,7 @@ rm -fr $RPM_BUILD_ROOT
 %files client
 %defattr(-, root, root)
 %dir %{_sysconfdir}/openafs
+%dir %{_localstatedir}/cache/openafs
 %config(noreplace) %{_sysconfdir}/openafs/CellServDB
 %config(noreplace) %{_sysconfdir}/openafs/ThisCell
 %config(noreplace) %{_sysconfdir}/openafs/cacheinfo
@@ -312,6 +316,11 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Mon Jul 25 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7.1
+- rpmFusion Bug 1783
+- Populate and set SELinux context for the AFS cache directory
+  even though we use memcache by default
+
 * Thu Jul 21 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7
 - Update to OpenAFS 1.6.0 pre-release 7
 - Rename /usr/sbin/backup to /usr/sbin/afsbackup rpmFusion Bug # 1727
