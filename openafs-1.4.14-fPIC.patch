@@ -1,0 +1,25 @@
+--- src/cf/osconf.m4.orig	2011-08-05 10:50:28.331936670 -0400
++++ src/cf/osconf.m4	2011-08-05 12:32:32.530773075 -0400
+@@ -312,7 +312,7 @@
+ 		CCOBJ="${CC} -fPIC"
+ 		KERN_OPTMZ=-O2
+ 		LEX="flex -l"
+-		MT_CFLAGS='-DAFS_PTHREAD_ENV -pthread -D_REENTRANT ${XCFLAGS}'
++		MT_CFLAGS='-DAFS_PTHREAD_ENV -pthread -D_REENTRANT ${XCFLAGS} -fPIC'
+ 		MT_LIBS="-lpthread"
+ 		PAM_CFLAGS="-g -O2 -Dlinux -DLINUX_PAM -fPIC"
+ 		SHLIB_CFLAGS="-fPIC"
+@@ -368,11 +368,11 @@
+ 
+ 	i386_linux*)
+ 		CC="gcc -pipe"
+-		CCOBJ="gcc -pipe"
++		CCOBJ="gcc -pipe -fPIC"
+ 		MT_CC="gcc -pipe"
+ 		KERN_OPTMZ=-O2
+ 		LEX="flex -l"
+-		MT_CFLAGS='-DAFS_PTHREAD_ENV -pthread -D_REENTRANT ${XCFLAGS}'
++		MT_CFLAGS='-DAFS_PTHREAD_ENV -pthread -D_REENTRANT ${XCFLAGS} -fPIC'
+ 		MT_LIBS="-lpthread"
+ 		DBG=-g
+ 		KERN_DBG=-g
