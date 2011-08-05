@@ -15,7 +15,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.0
-Release:        0.%{pre}.1%{?dist}
+Release:        0.%{pre}.2%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -28,7 +28,9 @@ Source14:       afs.conf
 
 BuildRoot:      %{_tmppath}/%{name}-root
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
-BuildRequires:	automake
+BuildRequires:	automake, autoconf
+
+Patch0:		openafs-1.6.0-fPIC.patch
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -92,6 +94,9 @@ Cell.
 %prep
 %setup -q -b 1 -n openafs-%{version}%{pre}
 
+# This changes osconf.m4 to build with -fPIC on i386 and x86_64
+%patch0
+
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
 iconv -f ISO-8859-1 -t UTF8 src/LICENSE~ > src/LICENSE
@@ -116,8 +121,7 @@ buildIt() {
         --disable-kernel-module \
         --disable-strip-binaries \
         --enable-supergroups  \
-        --with-krb5-conf=/usr/bin/krb5-config \
-        CCOBJ=-fPIC
+        --with-krb5-conf=/usr/bin/krb5-config
 
     # Build is not SMP compliant
     make $RPM_OPT_FLGS all_nolibafs
@@ -316,6 +320,12 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Aug 04 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7.2
+- BuildReq autoconf
+- Patch osconf.m4 to force building with -fPIC as there were still
+  objects used in libraries that were not build with -fPIC
+- Removed the CCOBJ environment variable with the configure line
+
 * Mon Jul 25 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7.1
 - rpmFusion Bug 1783
 - Populate and set SELinux context for the AFS cache directory
