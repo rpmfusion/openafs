@@ -10,17 +10,15 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre4
-
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.0
-Release:        0.1.%{pre}%{?dist}
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}%{pre}-src.tar.bz2
-Source1:        http://www.openafs.org/dl/openafs/%{version}%{pre}/openafs-%{version}%{pre}-doc.tar.bz2
+Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}-src.tar.bz2
+Source1:        http://www.openafs.org/dl/openafs/%{version}/openafs-%{version}-doc.tar.bz2
 Source11:       CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -28,7 +26,9 @@ Source14:       afs.conf
 
 BuildRoot:      %{_tmppath}/%{name}-root
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
-BuildRequires:	automake
+BuildRequires:	automake, autoconf
+
+Patch0:		openafs-1.6.0-fPIC.patch
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -90,7 +90,10 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}%{pre}
+%setup -q -b 1 -n openafs-%{version}
+
+# This changes osconf.m4 to build with -fPIC on i386 and x86_64
+%patch0
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -116,8 +119,7 @@ buildIt() {
         --disable-kernel-module \
         --disable-strip-binaries \
         --enable-supergroups  \
-        --with-krb5-conf=/usr/bin/krb5-config \
-        CCOBJ=-fPIC
+        --with-krb5-conf=/usr/bin/krb5-config
 
     # Build is not SMP compliant
     make $RPM_OPT_FLGS all_nolibafs
@@ -150,6 +152,10 @@ install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 # Include kpasswd as kapasswd so I can change my admin tokens
 mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kapasswd
 
+# Rename /usr/bin/backup to not conflict with Coda 
+# (Future AFS upstream change)
+mv ${RPM_BUILD_ROOT}/usr/sbin/backup ${RPM_BUILD_ROOT}/usr/sbin/afsbackup
+
 # Put the PAM modules in a sane place
 mkdir -p ${RPM_BUILD_ROOT}/%{_lib}/security
 mv ${RPM_BUILD_ROOT}%{_libdir}/pam_afs.krb.so.1 \
@@ -175,6 +181,13 @@ done
 # rename man page kpasswd to kapasswd
 mv $RPM_BUILD_ROOT%{_mandir}/man1/kpasswd.1 \
    $RPM_BUILD_ROOT%{_mandir}/man1/kapasswd.1
+
+# rename backup man page to afsbackup
+mv $RPM_BUILD_ROOT%{_mandir}/man8/backup.8 \
+   $RPM_BUILD_ROOT%{_mandir}/man8/afsbackup.8
+
+# Create the cache directory
+install -d -m 700 $RPM_BUILD_ROOT%{_localstatedir}/cache/openafs
 
 # don't restart in post because kernel modules could well have changed
 %post
@@ -234,7 +247,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/unlog
 %{_bindir}/up
 %{_bindir}/translate_et
-%{_sbindir}/backup
+%{_sbindir}/afsbackup
 %{_sbindir}/butc
 %{_sbindir}/fstrace
 %{_sbindir}/rxdebug
@@ -251,6 +264,7 @@ rm -fr $RPM_BUILD_ROOT
 %files client
 %defattr(-, root, root)
 %dir %{_sysconfdir}/openafs
+%dir %{_localstatedir}/cache/openafs
 %config(noreplace) %{_sysconfdir}/openafs/CellServDB
 %config(noreplace) %{_sysconfdir}/openafs/ThisCell
 %config(noreplace) %{_sysconfdir}/openafs/cacheinfo
@@ -304,6 +318,29 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Fri Sep 02 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-1
+- Update to OpenAFS 1.6.0 final
+
+* Thu Aug 04 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7.2
+- BuildReq autoconf
+- Patch osconf.m4 to force building with -fPIC as there were still
+  objects used in libraries that were not build with -fPIC
+- Removed the CCOBJ environment variable with the configure line
+
+* Mon Jul 25 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7.1
+- rpmFusion Bug 1783
+- Populate and set SELinux context for the AFS cache directory
+  even though we use memcache by default
+
+* Thu Jul 21 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7
+- Update to OpenAFS 1.6.0 pre-release 7
+- Rename /usr/sbin/backup to /usr/sbin/afsbackup rpmFusion Bug # 1727
+- Add the -fakestat option to the default options for afsd
+  rpmfusion Bug # 1837
+
+* Wed Jun 08 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.1.pre6
+- Update to OpenAFS 1.6.0 pre-release 6
+
 * Tue Jun 07 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.1.pre4
 - rpmFusion Bug # 1782
 - rename the kpasswd binary to kapasswd to match its man page
