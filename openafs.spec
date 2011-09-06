@@ -10,17 +10,15 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre7
-
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.0
-Release:        0.%{pre}.2%{?dist}
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}%{pre}-src.tar.bz2
-Source1:        http://www.openafs.org/dl/openafs/%{version}%{pre}/openafs-%{version}%{pre}-doc.tar.bz2
+Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}-src.tar.bz2
+Source1:        http://www.openafs.org/dl/openafs/%{version}/openafs-%{version}-doc.tar.bz2
 Source11:       CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -92,7 +90,7 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}%{pre}
+%setup -q -b 1 -n openafs-%{version}
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
@@ -320,6 +318,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Fri Sep 02 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-1
+- Update to OpenAFS 1.6.0 final
+
 * Thu Aug 04 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-0.pre7.2
 - BuildReq autoconf
 - Patch osconf.m4 to force building with -fPIC as there were still
