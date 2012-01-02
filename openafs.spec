@@ -10,15 +10,17 @@
 %define sysname amd64_linux26
 %endif
 
+%define pre pre1
+
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        0.pre1%{?dist}
+Release:        0.%{pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}-src.tar.bz2
-Source1:        http://www.openafs.org/dl/openafs/%{version}/openafs-%{version}-doc.tar.bz2
+Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}%{pre}-src.tar.bz2
+Source1:        http://www.openafs.org/dl/openafs/%{version}/openafs-%{version}%{pre}-doc.tar.bz2
 Source11:       CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -90,7 +92,7 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}
+%setup -q -b 1 -n openafs-%{version}%{pre}
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
