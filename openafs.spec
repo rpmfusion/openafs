@@ -270,6 +270,7 @@ rm -fr $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openafs/CellServDB
 %config(noreplace) %{_sysconfdir}/openafs/ThisCell
 %config(noreplace) %{_sysconfdir}/openafs/cacheinfo
+%{_bindir}/afsio
 %{_bindir}/cmdebug
 %{_bindir}/xstat_cm_test
 %{_sbindir}/afsd
