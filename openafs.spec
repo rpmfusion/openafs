@@ -321,7 +321,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
-* Fri Dec 30 2011 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre1
+* Fri Jan 06 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre1
 - Update to OpenAFS 1.6.1 pre-release 1
 
 * Fri Sep 02 2011 Jack Neely <jjneely@ncsu.edu> 0:1.6.0-1
