@@ -79,7 +79,10 @@ start() {
     action $"Loading AFS kernel module: " /sbin/modprobe openafs 
     RETVAL=$?
 
-    [ $RETVAL -eq 0 ] || return $RETVAL
+    if [ $RETVAL -ne 0 ] ; then
+        logger -p daemon.error "OpenAFS Kernel Module didn't load in the init script. Do you have it installed?"
+        return $RETVAL
+    fi
 
     touch /var/lock/subsys/openafs
 

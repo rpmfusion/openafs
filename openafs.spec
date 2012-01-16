@@ -15,7 +15,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        0.%{pre}%{?dist}
+Release:        0.%{pre}.1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -31,6 +31,10 @@ BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
 BuildRequires:	automake, autoconf
 
 Patch0:		openafs-1.6.0-fPIC.patch
+
+# Already merged in master, awaiting 1.6.
+Patch1:		openafs-1.6.0-setserverprefs.patch
+Patch2:		openafs-1.6.0-xstat-cm-test.patch
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -96,6 +100,8 @@ Cell.
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
+
+# These patches are already merged in master.
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -321,6 +327,11 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Mon Jan 16 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre1.1
+- Log an error if we couldn't load the kernel module (RF BZ #2006)
+- Fix setserverprefs for vlservers (http://gerrit.openafs.org/5465)
+- Fix xstat_cm_test (http://gerrit.openafs.org/5237)
+
 * Fri Jan 06 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre1
 - Update to OpenAFS 1.6.1 pre-release 1
 
