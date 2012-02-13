@@ -26,7 +26,7 @@ Source12:       cacheinfo
 Source13:       openafs.init
 Source14:       afs.conf
 
-BuildRoot:      %{_tmppath}/%{name}-root
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
 BuildRequires:	automake, autoconf
 
