@@ -10,7 +10,7 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre2
+%define pre pre3
 
 Summary:        Enterprise Network File System
 Name:           openafs
@@ -321,6 +321,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Feb 28 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre3
+- Update to OpenAFS 1.6.1 pre-release 3
+
 * Wed Feb 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre2
 - Update to OpenAFS 1.6.1 pre-release 2
 - Drop setserverprefs patch (merged in http://gerrit.openafs.org/5566)
