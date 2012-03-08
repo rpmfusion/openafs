@@ -5,8 +5,9 @@
 # chkconfig: - 25 90
 # description:  AFS is a distributed file system which provides location
 #		transparency, caching and secure authentication.
-#		Additional configuration can be done in the /etc/sysconfig/afs
-#		file. Read the documentation in that file for more information.
+#		Additional configuration can be done in the
+#		/etc/sysconfig/openafs file. Read the documentation in that
+#		file for more information.
 # processname:  afsd
 # config:       /etc/sysconfig/openafs
 # pidfile:      (n/a)
@@ -119,7 +120,7 @@ start() {
     ($_CMD > /dev/null && success) || failure
     echo
 
-    # Run the post init script from /etc/sysconfig/afs
+    # Run the post init script from /etc/sysconfig/openafs
     if [ ! -z "$AFS_POST_INIT" ] ; then
     	[ $RETVAL -eq 0 ] && $AFS_POST_INIT
     fi
