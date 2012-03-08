@@ -15,7 +15,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        0.%{pre}%{?dist}
+Release:        0.%{pre}%{?dist}.1
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -133,6 +133,10 @@ buildIt
 %install
 rm -rf ${RPM_BUILD_ROOT}
 make DESTDIR=$RPM_BUILD_ROOT install
+
+# Set the executable bit on libraries in libdir, so rpmbuild knows to 
+# create "Provides" entries in the package metadata for the libraries
+chmod +x ${RPM_BUILD_ROOT}%{_libdir}/*.so*
 
 # install config info
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
@@ -321,14 +325,16 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Mar 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4.1
+- Set the executable bit on the libraries installed in libdir, so that
+  rpmbuild will generate Provides metadata for these libraries. See
+  upstream git commit 3f7d8ec2. Fixes RPM Fusion bug #2215
+
 * Thu Mar 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4
 - Update to OpenAFS 1.6.1 pre-release 4
 - Update CellServDB to the latest version from grand.central.org
 - Add the sysname from /usr/bin/sys to the end of the Fedora sysname.
   This provides backwards-compatability with sites who need "linux26".
-- Set the executable bit on the libraries installed in libdir, so that
-  rpmbuild will generate Provides metadata for these libraries. See
-  upstream git commit 3f7d8ec2. Fixes RPM Fusion bug #2215
 
 * Wed Feb 28 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre3
 - Update to OpenAFS 1.6.1 pre-release 3
