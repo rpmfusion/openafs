@@ -10,7 +10,7 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre3
+%define pre pre4
 
 Summary:        Enterprise Network File System
 Name:           openafs
@@ -321,6 +321,15 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Mar 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4
+- Update to OpenAFS 1.6.1 pre-release 4
+- Update CellServDB to the latest version from grand.central.org
+- Add the sysname from /usr/bin/sys to the end of the Fedora sysname.
+  This provides backwards-compatability with sites who need "linux26".
+- Set the executable bit on the libraries installed in libdir, so that
+  rpmbuild will generate Provides metadata for these libraries. See
+  upstream git commit 3f7d8ec2. Fixes RPM Fusion bug #2215
+
 * Wed Feb 28 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre3
 - Update to OpenAFS 1.6.1 pre-release 3
 
