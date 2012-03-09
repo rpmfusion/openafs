@@ -19,18 +19,18 @@ Release:        0.%{pre}%{?dist}.1
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}%{pre}-src.tar.bz2
-Source1:        http://www.openafs.org/dl/openafs/%{version}/openafs-%{version}%{pre}-doc.tar.bz2
-Source11:       CellServDB
+Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
+Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
+Source11:       http://grand.central.org/dl/cellservdb/CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
 Source14:       afs.conf
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
-BuildRequires:	automake, autoconf
+BuildRequires:  automake, autoconf
 
-Patch0:		openafs-1.6.0-fPIC.patch
+Patch0:         openafs-1.6.0-fPIC.patch
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
