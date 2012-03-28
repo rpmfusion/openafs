@@ -15,7 +15,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        0.%{pre}%{?dist}.1
+Release:        0.%{pre}%{?dist}.2
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -46,6 +46,11 @@ OpenAFS packages but are not necessarily tied to a client or server.
 Summary:        OpenAFS Filesystem client
 Group:          System Environment/Daemons
 Requires(post): bash, coreutils, chkconfig
+%if (0%{?fedora} && 0%{?fedora} <= 16) || (0%{?rhel} && 0%{?rhel} <= 6)
+Requires(post): /sbin/restorecon
+%else
+Requires(post): /usr/sbin/restorecon
+%endif
 Requires:       %{name}-kmod  >= %{version}
 Requires:       openafs = %{version}
 Provides:       %{name}-kmod-common = %{version}
@@ -159,7 +164,7 @@ install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kapasswd
 
 # Rename /usr/bin/backup to not conflict with Coda 
-# (Future AFS upstream change)
+# (Filed upstream as RT #130621)
 mv ${RPM_BUILD_ROOT}/usr/sbin/backup ${RPM_BUILD_ROOT}/usr/sbin/afsbackup
 
 # Put the PAM modules in a sane place
@@ -325,6 +330,11 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Fri Mar 23 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4.2
+- Require restorecon for compatability with selinux.
+  Fixes RPM Fusion bug #2138.
+- Document upstream bug for afsbackup.
+
 * Thu Mar 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4.1
 - Add the sysname from /usr/bin/sys to the end of the Fedora sysname.
   This provides backwards-compatability with sites who need "linux26".
