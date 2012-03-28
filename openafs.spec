@@ -15,22 +15,22 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        0.%{pre}%{?dist}
+Release:        0.%{pre}%{?dist}.2
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://www.openafs.org/dl/openafs/%{version}/%{name}-%{version}%{pre}-src.tar.bz2
-Source1:        http://www.openafs.org/dl/openafs/%{version}/openafs-%{version}%{pre}-doc.tar.bz2
-Source11:       CellServDB
+Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
+Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
+Source11:       http://grand.central.org/dl/cellservdb/CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
 Source14:       afs.conf
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
-BuildRequires:	automake, autoconf
+BuildRequires:  automake, autoconf
 
-Patch0:		openafs-1.6.0-fPIC.patch
+Patch0:         openafs-1.6.0-fPIC.patch
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -46,6 +46,11 @@ OpenAFS packages but are not necessarily tied to a client or server.
 Summary:        OpenAFS Filesystem client
 Group:          System Environment/Daemons
 Requires(post): bash, coreutils, chkconfig
+%if (0%{?fedora} && 0%{?fedora} <= 16) || (0%{?rhel} && 0%{?rhel} <= 6)
+Requires(post): /sbin/restorecon
+%else
+Requires(post): /usr/sbin/restorecon
+%endif
 Requires:       %{name}-kmod  >= %{version}
 Requires:       openafs = %{version}
 Provides:       %{name}-kmod-common = %{version}
@@ -159,7 +164,7 @@ install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
 mv ${RPM_BUILD_ROOT}/usr/bin/kpasswd ${RPM_BUILD_ROOT}/usr/bin/kapasswd
 
 # Rename /usr/bin/backup to not conflict with Coda 
-# (Future AFS upstream change)
+# (Filed upstream as RT #130621)
 mv ${RPM_BUILD_ROOT}/usr/sbin/backup ${RPM_BUILD_ROOT}/usr/sbin/afsbackup
 
 # Put the PAM modules in a sane place
@@ -325,14 +330,20 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
-* Thu Mar 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4
-- Update to OpenAFS 1.6.1 pre-release 4
-- Update CellServDB to the latest version from grand.central.org
+* Fri Mar 23 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4.2
+- Require restorecon for compatability with selinux.
+  Fixes RPM Fusion bug #2138.
+- Document upstream bug for afsbackup.
+
+* Thu Mar 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4.1
 - Add the sysname from /usr/bin/sys to the end of the Fedora sysname.
   This provides backwards-compatability with sites who need "linux26".
 - Set the executable bit on the libraries installed in libdir, so that
   rpmbuild will generate Provides metadata for these libraries. See
   upstream git commit 3f7d8ec2. Fixes RPM Fusion bug #2215
+
+* Wed Mar 07 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4
+- Update to OpenAFS 1.6.1 pre-release 4
 
 * Wed Feb 28 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre3
 - Update to OpenAFS 1.6.1 pre-release 3
