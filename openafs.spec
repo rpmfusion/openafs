@@ -10,17 +10,15 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre4
-
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        0.%{pre}%{?dist}.2
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
-Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
+Source0:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-src.tar.bz2
+Source1:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-doc.tar.bz2
 Source11:       http://grand.central.org/dl/cellservdb/CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -45,12 +43,7 @@ OpenAFS packages but are not necessarily tied to a client or server.
 %package client
 Summary:        OpenAFS Filesystem client
 Group:          System Environment/Daemons
-Requires(post): bash, coreutils, chkconfig
-%if (0%{?fedora} && 0%{?fedora} <= 16) || (0%{?rhel} && 0%{?rhel} <= 6)
-Requires(post): /sbin/restorecon
-%else
-Requires(post): /usr/sbin/restorecon
-%endif
+Requires(post): bash, coreutils, chkconfig, selinux-policy-targeted
 Requires:       %{name}-kmod  >= %{version}
 Requires:       openafs = %{version}
 Provides:       %{name}-kmod-common = %{version}
@@ -97,7 +90,7 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}%{pre}
+%setup -q -b 1 -n openafs-%{version}
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
@@ -330,6 +323,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Apr 04 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-1
+- Update to OpenAFS 1.6.1 final
+- Require selinux-policy-targeted (RPM Fusion bug #2138).
+
 * Fri Mar 23 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4.2
 - Require restorecon for compatability with selinux.
   Fixes RPM Fusion bug #2138.
