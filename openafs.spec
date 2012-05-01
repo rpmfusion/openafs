@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -63,6 +63,7 @@ Summary:        OpenAFS development header files and static libraries
 Group:          Development/Libraries
 Requires:       openafs = %{version}-%{release}
 Requires(post): /sbin/ldconfig
+Provides:       openafs-static = %{version}-%{release}
  
 %description devel
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -323,6 +324,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Mon May 01 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-2
+- Provide openafs-static (RPM Fusion bug #2310).
+
 * Wed Apr 04 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-1
 - Update to OpenAFS 1.6.1 final
 - Require selinux-policy-targeted (RPM Fusion bug #2138).
