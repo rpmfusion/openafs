@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -29,6 +29,8 @@ BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
 BuildRequires:  automake, autoconf
 
 Patch0:         openafs-1.6.0-fPIC.patch
+# Upstream patch to fix fileservers with >2TB partitions
+Patch1:         openafs-1.6.1-int31-partsize.patch
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -95,6 +97,9 @@ Cell.
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
+
+# This allows fileservers to serve data from partition sizes greater than 2TB.
+%patch1 -p1
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -324,6 +329,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-3
+- Upstream patch for fileserver partitions >2TB
+
 * Mon May 01 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-2
 - Provide openafs-static (RPM Fusion bug #2310).
 
