@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -336,6 +336,12 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Aug 23 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-5
+- Update /etc/sysconfig/openafs to have some more current
+  default settings.
+- AFS_CACHE_DIR is now pre-poplated with the default value
+- Encryption is used by default
+
 * Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-4
 - Upstream patch for new glibc
 
