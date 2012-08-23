@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -31,6 +31,10 @@ BuildRequires:  automake, autoconf
 Patch0:         openafs-1.6.0-fPIC.patch
 # Upstream patch to fix fileservers with >2TB partitions
 Patch1:         openafs-1.6.1-int31-partsize.patch
+# Upstream patch to compile with newer glibc
+# (not yet on openafs-stable-1_6_x; cherry-picked from master)
+Patch2:         openafs-1.6.1-afsd-sys-resource-h.patch
+
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -100,6 +104,9 @@ Cell.
 
 # This allows fileservers to serve data from partition sizes greater than 2TB.
 %patch1 -p1
+
+# This allows us to build with newer glibc
+%patch2 -p1
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -329,6 +336,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-4
+- Upstream patch for new glibc
+
 * Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-3
 - Upstream patch for fileserver partitions >2TB
 

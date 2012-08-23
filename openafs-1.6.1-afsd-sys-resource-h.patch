@@ -1,0 +1,38 @@
+commit 94a6a552ae8b45f02dd6a6a3a92907d355801eb1
+Author: Marc Dionne <marc.c.dionne@gmail.com>
+Date:   Sat Jun 2 20:45:08 2012 -0400
+
+    afsd: include sys/resource.h in afsd_kernel.c
+    
+    With a recent glibc update, sys/wait.h no longer includes
+    sys/resource.h unless __USE_SVID, __USE_XOPEN or __USE_XOPEN2K8
+    are set.
+    
+    Don't rely on the indirect inclusion to get the bits we need;
+    include it directly in afsd_kernel.c.  This include used to be
+    there but was dropped when afsd_kernel.c was split off.
+    
+    Change-Id: I1bfd2e0c340e15ca44472aa89614f088e0c0ce0c
+    Reviewed-on: http://gerrit.openafs.org/7522
+    Tested-by: BuildBot <buildbot@rampaginggeek.com>
+    Reviewed-by: Derrick Brashear <shadow@dementix.org>
+    (cherry picked from commit bc3a32a84facb8114a8c7de87025f972d0281098)
+    
+    Conflicts:
+    	src/afsd/afsd_kernel.c
+
+diff --git a/src/afsd/afsd_kernel.c b/src/afsd/afsd_kernel.c
+index 1f7fdbb..3c7c6ee 100644
+--- a/src/afsd/afsd_kernel.c
++++ b/src/afsd/afsd_kernel.c
+@@ -33,6 +33,10 @@
+ #include <sys/wait.h>
+ 
+ 
++#if defined(AFS_LINUX20_ENV)
++#include <sys/resource.h>
++#endif
++
+ #ifdef HAVE_SYS_PARAM_H
+ #include <sys/param.h>
+ #endif
