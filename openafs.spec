@@ -98,7 +98,8 @@ Cell.
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
 
-# This allows fileservers to serve data from partition sizes greater than 2TB.
+# # This allows fileservers to report correct partition usage on
+# partitions greater than 2TB.
 %patch1 -p1
 
 # Convert the licese to UTF-8
@@ -336,7 +337,8 @@ rm -fr $RPM_BUILD_ROOT
 - Encryption is used by default
 
 * Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-3
-- Upstream patch for fileserver partitions >2TB
+- Patch to allow fileservers to report correct partition
+  usage data on partitions sizes greater than 2TB.
 
 * Mon May 01 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-2
 - Provide openafs-static (RPM Fusion bug #2310).
