@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -102,7 +102,8 @@ Cell.
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
 
-# This allows fileservers to serve data from partition sizes greater than 2TB.
+# This allows fileservers to report correct partition usage on
+# partitions greater than 2TB.
 %patch1 -p1
 
 # This allows us to build with newer glibc
@@ -336,11 +337,18 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Aug 23 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-5
+- Update /etc/sysconfig/openafs to have some more current
+  default settings.
+- AFS_CACHE_DIR is now pre-poplated with the default value
+- Encryption is used by default
+
 * Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-4
 - Upstream patch for new glibc
 
 * Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-3
-- Upstream patch for fileserver partitions >2TB
+- Patch to allow fileservers to report correct partition
+  usage data on partitions sizes greater than 2TB.
 
 * Mon May 01 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-2
 - Provide openafs-static (RPM Fusion bug #2310).
