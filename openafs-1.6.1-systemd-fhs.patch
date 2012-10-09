@@ -1,0 +1,46 @@
+From 5c440cbf1c57bb22e7ebbeaf164f52e68377252f Mon Sep 17 00:00:00 2001
+From: Ken Dreyer <ktdreyer@ktdreyer.com>
+Date: Mon, 8 Oct 2012 20:58:13 -0600
+Subject: [PATCH 3/5] systemd: use FHS-style paths
+
+The unit files from openafs.org still refer to the old transarc paths.
+Replace them with FHS-compliant paths.
+
+Change-Id: Iff326d082a00e3632ff7a8c9983fbf277ce6b4eb
+---
+ src/packaging/RedHat/openafs-client.service | 4 ++--
+ src/packaging/RedHat/openafs-server.service | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/packaging/RedHat/openafs-client.service b/src/packaging/RedHat/openafs-client.service
+index a5fb287..89a344f 100644
+--- a/src/packaging/RedHat/openafs-client.service
++++ b/src/packaging/RedHat/openafs-client.service
+@@ -6,9 +6,9 @@ After=syslog.target network.target
+ Type=forking
+ EnvironmentFile=/etc/sysconfig/openafs
+ ExecStartPre=/sbin/modprobe openafs
+-ExecStart=/usr/vice/etc/afsd $AFSD_ARGS
++ExecStart=/usr/sbin/afsd $AFSD_ARGS
+ ExecStop=/bin/umount /afs
+-ExecStop=/usr/vice/etc/afsd -shutdown
++ExecStop=/usr/sbin/afsd -shutdown
+ ExecStop=/sbin/rmmod libafs
+ KillMode=none
+ 
+diff --git a/src/packaging/RedHat/openafs-server.service b/src/packaging/RedHat/openafs-server.service
+index 2d34bb0..6f6a26f 100644
+--- a/src/packaging/RedHat/openafs-server.service
++++ b/src/packaging/RedHat/openafs-server.service
+@@ -4,7 +4,7 @@ After=syslog.target network.target
+ 
+ [Service]
+ EnvironmentFile=-/etc/sysconfig/openafs
+-ExecStart=/usr/afs/bin/bosserver $BOSSERVER_ARGS
++ExecStart=/usr/bin/bosserver $BOSSERVER_ARGS
+ ExecStop=/usr/bin/bos shutdown localhost -wait -localauth
+ 
+ [Install]
+-- 
+1.7.11.7
+

@@ -1,0 +1,26 @@
+From 9ed4e76885f2a315586bf32b3106de86c32c5daa Mon Sep 17 00:00:00 2001
+From: Ken Dreyer <ktdreyer@ktdreyer.com>
+Date: Mon, 8 Oct 2012 20:55:12 -0600
+Subject: [PATCH 1/5] systemd: skip CellServDB manipulation
+
+Change-Id: I23544f183c0423b208b6465c8d7184d64b6b4a15
+---
+ src/packaging/RedHat/openafs-client.service | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/packaging/RedHat/openafs-client.service b/src/packaging/RedHat/openafs-client.service
+index 936762e..2ee652a 100644
+--- a/src/packaging/RedHat/openafs-client.service
++++ b/src/packaging/RedHat/openafs-client.service
+@@ -5,8 +5,6 @@ After=syslog.target network.target
+ [Service]
+ Type=forking
+ EnvironmentFile=/etc/sysconfig/openafs
+-ExecStartPre=/bin/sed -n 'w/usr/vice/etc/CellServDB' /usr/vice/etc/CellServDB.local /usr/vice/etc/CellServDB.dist
+-ExecStartPre=/bin/chmod 0644 /usr/vice/etc/CellServDB
+ ExecStartPre=/sbin/modprobe openafs
+ ExecStart=/usr/vice/etc/afsd $AFSD_ARGS
+ ExecStop=/bin/umount /afs
+-- 
+1.7.11.7
+
