@@ -1,0 +1,30 @@
+From 1e9b8058d1da1ebde09cd280cf441a4af56e254a Mon Sep 17 00:00:00 2001
+From: Ken Dreyer <ktdreyer@ktdreyer.com>
+Date: Mon, 8 Oct 2012 20:59:43 -0600
+Subject: [PATCH 4/5] systemd: add more environment variables to
+ openafs-client.service
+
+At the risk of deviating too far from upstream, this permits a few more
+user-friendly environment variables in /etc/sysconfig/openafs.
+
+Change-Id: Ib0938b2865005fc1f1b1c49dfda0d4bf92957004
+---
+ src/packaging/RedHat/openafs-client.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/packaging/RedHat/openafs-client.service b/src/packaging/RedHat/openafs-client.service
+index 89a344f..719aed77 100644
+--- a/src/packaging/RedHat/openafs-client.service
++++ b/src/packaging/RedHat/openafs-client.service
+@@ -6,7 +6,7 @@ After=syslog.target network.target
+ Type=forking
+ EnvironmentFile=/etc/sysconfig/openafs
+ ExecStartPre=/sbin/modprobe openafs
+-ExecStart=/usr/sbin/afsd $AFSD_ARGS
++ExecStart=/usr/sbin/afsd $AFSD_ARGS $CACHE $OPTIONS $CONFDIR
+ ExecStop=/bin/umount /afs
+ ExecStop=/usr/sbin/afsd -shutdown
+ ExecStop=/sbin/rmmod libafs
+-- 
+1.7.11.7
+
