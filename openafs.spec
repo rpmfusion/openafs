@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -455,6 +455,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Nov 07 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-7
+- Fine tune the systemd version of /etc/sysconfig/openafs
+  to use -fakestat and have some options settable by the user.
+
 * Mon Oct 8 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-6
 - Enable systemd unit files for F18 and above
 
