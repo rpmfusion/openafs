@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        7%{?dist}
+Release:        8%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -25,8 +25,11 @@ Source13:       openafs.init
 Source14:       afs.conf
 # Similar to afs.conf, but for systemd.
 Source15:       afs.conf.systemd
-# Sysnames helper script
-Source16:       sysnames
+# Handle AFS post init scriptlets for systemd
+Source16:       posthooks.sh
+# Default post init scripts
+Source20:       sysnames.sh
+Source21:       setcrypt.sh
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
@@ -207,7 +210,13 @@ echo %{thiscell} > ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/ThisCell
   popd
   # install "sysnames" helper script
   install -p -m 755 %{SOURCE16} \
-    ${RPM_BUILD_ROOT}%{_libexecdir}/openafs/sysnames
+    ${RPM_BUILD_ROOT}%{_libexecdir}/openafs/posthooks.sh
+  install -d -m 755 \
+    ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/posthooks.d
+  install -p -m 644 %{SOURCE20} \
+    ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/posthooks.d/sysnames.sh
+  install -p -m 644 %{SOURCE21} \
+    ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/posthooks.d/setcrypt.sh
 %else
   # install legacy SysV init script
   mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d
@@ -387,7 +396,8 @@ rm -fr $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/openafs/cacheinfo
 %if 0%{?_with_systemd}
 %{_unitdir}/openafs-client.service
-%{_libexecdir}/openafs/sysnames
+%{_libexecdir}/openafs/posthooks.sh
+%{_sysconfdir}/openafs/posthooks.d/*.sh
 %endif
 %{_bindir}/afsio
 %{_bindir}/cmdebug
@@ -455,6 +465,11 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Nov 08 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-8
+- Implement a directory for sourced post init scripts.  These
+  fine tune the AFS client's behavior after startup and live in
+  /etc/openafs/posthooks.d/
+
 * Wed Nov 07 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-7
 - Fine tune the systemd version of /etc/sysconfig/openafs
   to use -fakestat and have some options settable by the user.
