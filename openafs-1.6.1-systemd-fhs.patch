@@ -37,7 +37,7 @@ index 2d34bb0..6f6a26f 100644
  [Service]
  EnvironmentFile=-/etc/sysconfig/openafs
 -ExecStart=/usr/afs/bin/bosserver $BOSSERVER_ARGS
-+ExecStart=/usr/bin/bosserver $BOSSERVER_ARGS
++ExecStart=/usr/sbin/bosserver $BOSSERVER_ARGS
  ExecStop=/usr/bin/bos shutdown localhost -wait -localauth
  
  [Install]

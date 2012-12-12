@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.1
-Release:        8%{?dist}
+Release:        9%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -465,6 +465,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Tue Dec 11 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-9
+- Correct bosserver path in systemd unit file
+
 * Wed Nov 08 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-8
 - Implement a directory for sourced post init scripts.  These
   fine tune the AFS client's behavior after startup and live in
