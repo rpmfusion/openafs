@@ -10,15 +10,17 @@
 %define sysname amd64_linux26
 %endif
 
+%define pre pre1
+
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.1
-Release:        9%{?dist}
+Version:        1.6.2
+Release:        0.%{pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-src.tar.bz2
-Source1:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-doc.tar.bz2
+Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
+Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
 Source11:       http://grand.central.org/dl/cellservdb/CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -36,22 +38,16 @@ BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
 BuildRequires:  automake, autoconf
 
 Patch0:         openafs-1.6.0-fPIC.patch
-# Upstream patch to fix fileservers with >2TB partitions
-Patch1:         openafs-1.6.1-int31-partsize.patch
-# Upstream patch to compile with newer glibc
-# (not yet on openafs-stable-1_6_x; cherry-picked from master)
-Patch2:         openafs-1.6.1-afsd-sys-resource-h.patch
 # systemd: Skip CellServDB manipulation
-Patch3:        openafs-1.6.1-systemd-no-cellservdb.patch
+Patch1:        openafs-1.6.1-systemd-no-cellservdb.patch
 # systemd: unload the proper kernel module
-# (TODO: check if this can be upstreamed)
-Patch4:        openafs-1.6.1-systemd-kmod-name.patch
+Patch2:        openafs-1.6.1-systemd-kmod-name.patch
 # systemd: use FHS-style paths instead of transarc paths
-Patch5:        openafs-1.6.1-systemd-fhs.patch
+Patch3:        openafs-1.6.1-systemd-fhs.patch
 # systemd: add additional user-friendly environment vars
-Patch6:        openafs-1.6.1-systemd-env-vars.patch
+Patch4:        openafs-1.6.1-systemd-env-vars.patch
 # Add ExecPostStart "sysnames" helper script.
-Patch7:        openafs-1.6.1-systemd-execpoststart.patch
+Patch5:        openafs-1.6.1-systemd-execpoststart.patch
 
 # Use systemd unit files on Fedora 18 and above.
 %if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
@@ -132,24 +128,17 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}
+%setup -q -b 1 -n openafs-%{version}%{pre}
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
 
-# This allows fileservers to report correct partition usage on
-# partitions greater than 2TB.
-%patch1 -p1
-
-# This allows us to build with newer glibc
-%patch2 -p1
-
 # systemd unit file changes for RPM Fusion
-%patch3 -p1 -b .cellservdb
-%patch4 -p1 -b .kmod
-%patch5 -p1 -b .fhs
-%patch6 -p1 -b .envvars
-%patch7 -p1 -b .execpoststart
+%patch1 -p1 -b .cellservdb
+%patch2 -p1 -b .kmod
+%patch3 -p1 -b .fhs
+%patch4 -p1 -b .envvars
+%patch5 -p1 -b .execpoststart
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -465,6 +454,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Dec 13 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-0.pre1
+- Update to OpenAFS 1.6.2 pre-release 1
+- Remove upstreamed patches
+
 * Tue Dec 11 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-9
 - Correct bosserver path in systemd unit file
 
