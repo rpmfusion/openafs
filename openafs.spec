@@ -10,27 +10,50 @@
 %define sysname amd64_linux26
 %endif
 
+%define pre pre3
+
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.1
-Release:        4%{?dist}
+Version:        1.6.2
+Release:        0.%{pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-src.tar.bz2
-Source1:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-doc.tar.bz2
+Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
+Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
 Source11:       http://grand.central.org/dl/cellservdb/CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
 Source14:       afs.conf
+# Similar to afs.conf, but for systemd.
+Source15:       afs.conf.systemd
+# Handle AFS post init scriptlets for systemd
+Source16:       posthooks.sh
+# Default post init scripts
+Source20:       sysnames.sh
+Source21:       setcrypt.sh
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
 BuildRequires:  automake, autoconf
 
 Patch0:         openafs-1.6.0-fPIC.patch
-# Upstream patch to fix fileservers with >2TB partitions
-Patch1:         openafs-1.6.1-int31-partsize.patch
+# systemd: Skip CellServDB manipulation
+Patch1:        openafs-1.6.1-systemd-no-cellservdb.patch
+# systemd: unload the proper kernel module
+Patch2:        openafs-1.6.1-systemd-kmod-name.patch
+# systemd: use FHS-style paths instead of transarc paths
+Patch3:        openafs-1.6.1-systemd-fhs.patch
+# systemd: add additional user-friendly environment vars
+Patch4:        openafs-1.6.1-systemd-env-vars.patch
+# Add ExecPostStart "sysnames" helper script.
+Patch5:        openafs-1.6.1-systemd-execpoststart.patch
+
+# Use systemd unit files on Fedora 18 and above.
+%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
+  %global _with_systemd 1
+%endif
+
 
 %description
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -45,7 +68,14 @@ OpenAFS packages but are not necessarily tied to a client or server.
 %package client
 Summary:        OpenAFS Filesystem client
 Group:          System Environment/Daemons
-Requires(post): bash, coreutils, chkconfig, selinux-policy-targeted
+Requires(post): bash, coreutils, selinux-policy-targeted
+%if 0%{?_with_systemd}
+Requires(preun): systemd
+Requires(postun): systemd
+Requires(post): systemd
+%else
+Requires(post): chkconfig
+%endif
 Requires:       %{name}-kmod  >= %{version}
 Requires:       openafs = %{version}
 Provides:       %{name}-kmod-common = %{version}
@@ -82,6 +112,11 @@ shared libraries.
 Summary:    OpenAFS Filesystem Server
 Group:      System Environment/Daemons
 Requires:   openafs-client = %{version}, openafs = %{version}
+%if 0%{?_with_systemd}
+Requires(preun): systemd
+Requires(postun): systemd
+Requires(post): systemd
+%endif
  
 %description server
 The AFS distributed filesystem.  AFS is a distributed filesystem
@@ -93,14 +128,17 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}
+%setup -q -b 1 -n openafs-%{version}%{pre}
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
 
-# # This allows fileservers to report correct partition usage on
-# partitions greater than 2TB.
-%patch1 -p1
+# systemd unit file changes for RPM Fusion
+%patch1 -p1 -b .cellservdb
+%patch2 -p1 -b .kmod
+%patch3 -p1 -b .fhs
+%patch4 -p1 -b .envvars
+%patch5 -p1 -b .execpoststart
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -149,13 +187,38 @@ install -p -m 644 %{SOURCE11} ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
 install -p -m 644 %{SOURCE12} ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs
 echo %{thiscell} > ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/ThisCell
 
-# install the init script
-mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d
-install -m 755 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d/openafs
+# install the init file(s)
+%if 0%{?_with_systemd}
+  # install systemd service files
+  mkdir -p ${RPM_BUILD_ROOT}%{_unitdir}
+  pushd src/packaging/RedHat
+  install -p -m 644 openafs-client.service \
+    ${RPM_BUILD_ROOT}%{_unitdir}/openafs-client.service
+  install -p -m 644 openafs-server.service \
+    ${RPM_BUILD_ROOT}%{_unitdir}/openafs-server.service
+  popd
+  # install "sysnames" helper script
+  install -p -m 755 %{SOURCE16} \
+    ${RPM_BUILD_ROOT}%{_libexecdir}/openafs/posthooks.sh
+  install -d -m 755 \
+    ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/posthooks.d
+  install -p -m 644 %{SOURCE20} \
+    ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/posthooks.d/sysnames.sh
+  install -p -m 644 %{SOURCE21} \
+    ${RPM_BUILD_ROOT}%{_sysconfdir}/openafs/posthooks.d/setcrypt.sh
+%else
+  # install legacy SysV init script
+  mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d
+  install -m 755 %{SOURCE13} ${RPM_BUILD_ROOT}%{_sysconfdir}/rc.d/init.d/openafs
+%endif
 
 # sysconfig file
 mkdir -p ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig
-install -m 644 %{SOURCE14} ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig/openafs
+%if 0%{?_with_systemd}
+  install -m 644 %{SOURCE15} ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig/openafs
+%else
+  install -m 644 %{SOURCE14} ${RPM_BUILD_ROOT}%{_sysconfdir}/sysconfig/openafs
+%endif
 
 # Include the vlclient binary
 install -m 755 src/vlserver/vlclient ${RPM_BUILD_ROOT}/usr/sbin/vlclient
@@ -203,11 +266,18 @@ install -d -m 700 $RPM_BUILD_ROOT%{_localstatedir}/cache/openafs
 # don't restart in post because kernel modules could well have changed
 %post
 /sbin/ldconfig
-if [ $1 = 1 ]; then
+%if 0%{?_with_systemd}
+  # systemd unit files are in the -client and -server subpackages.
+%else
+  if [ $1 = 1 ]; then
         /sbin/chkconfig --add openafs
-fi
+  fi
+%endif
 
 %post client
+%if !0%{?_with_systemd}
+  %systemd_post openafs-client.service
+%endif
 # if this is owned by the package, upgrades with afs running can't work
 if [ ! -d /afs ] ; then
         mkdir -m 700 /afs
@@ -215,14 +285,43 @@ if [ ! -d /afs ] ; then
 fi 
 exit 0
 
+%post server
+%if !0%{?_with_systemd}
+  %systemd_post openafs-server.service
+%endif
+
 %preun
-if [ "$1" = 0 ] ; then
+%if 0%{?_with_systemd}
+  # systemd unit files are in the -client and -server subpackages.
+%else
+  if [ "$1" = 0 ] ; then
         /sbin/chkconfig --del openafs
         %{_sysconfdir}/rc.d/init.d/openafs stop && rmdir /afs
-fi
-exit 0
+  fi
+  exit 0
+%endif
+
+%preun client
+%if 0%{?_with_systemd}
+  %systemd_preun openafs-client.service
+%endif
+
+%preun server
+%if 0%{?_with_systemd}
+  %systemd_preun openafs-server.service
+%endif
 
 %postun -p /sbin/ldconfig
+
+%postun client
+%if 0%{?_with_systemd}
+  %systemd_postun openafs-client.service
+%endif
+
+%postun server
+%if 0%{?_with_systemd}
+  %systemd_postun openafs-server.service
+%endif
 
 %post devel -p /sbin/ldconfig
 
@@ -233,10 +332,16 @@ rm -fr $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root, -)
+%dir %{_sysconfdir}/openafs
+%dir %{_libexecdir}/openafs
 %doc src/LICENSE README NEWS README.DEVEL README.GIT README.PTHREADED_UBIK
 %doc README.WARNINGS README-WINDOWS
 %config(noreplace) %{_sysconfdir}/sysconfig/*
+%if 0%{?_with_systemd}
+# systemd files are in -client and -server subpackages
+%else
 %{_sysconfdir}/rc.d/init.d/*
+%endif
 %{_bindir}/aklog
 %{_bindir}/bos
 %{_bindir}/fs
@@ -274,11 +379,15 @@ rm -fr $RPM_BUILD_ROOT
 
 %files client
 %defattr(-, root, root)
-%dir %{_sysconfdir}/openafs
 %dir %{_localstatedir}/cache/openafs
 %config(noreplace) %{_sysconfdir}/openafs/CellServDB
 %config(noreplace) %{_sysconfdir}/openafs/ThisCell
 %config(noreplace) %{_sysconfdir}/openafs/cacheinfo
+%if 0%{?_with_systemd}
+%{_unitdir}/openafs-client.service
+%{_libexecdir}/openafs/posthooks.sh
+%{_sysconfdir}/openafs/posthooks.d/*.sh
+%endif
 %{_bindir}/afsio
 %{_bindir}/cmdebug
 %{_bindir}/xstat_cm_test
@@ -286,12 +395,27 @@ rm -fr $RPM_BUILD_ROOT
 
 %files server
 %defattr(-,root,root)
+%if 0%{?_with_systemd}
+%{_unitdir}/openafs-server.service
+%endif
 %{_bindir}/afsmonitor
 %{_bindir}/asetkey
 %{_bindir}/scout
 %{_bindir}/udebug
 %{_bindir}/xstat_fs_test
-%{_libexecdir}/openafs
+%{_libexecdir}/openafs/buserver
+%{_libexecdir}/openafs/dafileserver
+%{_libexecdir}/openafs/dasalvager
+%{_libexecdir}/openafs/davolserver
+%{_libexecdir}/openafs/fileserver
+%{_libexecdir}/openafs/kaserver
+%{_libexecdir}/openafs/ptserver
+%{_libexecdir}/openafs/salvager
+%{_libexecdir}/openafs/salvageserver
+%{_libexecdir}/openafs/upclient
+%{_libexecdir}/openafs/upserver
+%{_libexecdir}/openafs/vlserver
+%{_libexecdir}/openafs/volserver
 %{_sbindir}/dafssync-debug
 %{_sbindir}/fssync-debug
 %{_sbindir}/salvsync-debug
@@ -330,11 +454,39 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
-* Thu Aug 23 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-4
+* Tue Jan 22 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-0.pre3
+- Update to OpenAFS 1.6.2 pre-release 3
+
+* Wed Dec 26 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-0.pre2
+- Update to OpenAFS 1.6.2 pre-release 2
+
+* Thu Dec 13 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-0.pre1
+- Update to OpenAFS 1.6.2 pre-release 1
+- Remove upstreamed patches
+
+* Tue Dec 11 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-9
+- Correct bosserver path in systemd unit file
+
+* Wed Nov 08 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-8
+- Implement a directory for sourced post init scripts.  These
+  fine tune the AFS client's behavior after startup and live in
+  /etc/openafs/posthooks.d/
+
+* Wed Nov 07 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-7
+- Fine tune the systemd version of /etc/sysconfig/openafs
+  to use -fakestat and have some options settable by the user.
+
+* Mon Oct 8 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-6
+- Enable systemd unit files for F18 and above
+
+* Thu Aug 23 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-5
 - Update /etc/sysconfig/openafs to have some more current
   default settings.
 - AFS_CACHE_DIR is now pre-poplated with the default value
 - Encryption is used by default
+
+* Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-4
+- Upstream patch for new glibc
 
 * Wed Aug 22 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-3
 - Patch to allow fileservers to report correct partition
