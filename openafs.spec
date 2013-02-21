@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -274,7 +274,7 @@ install -d -m 700 $RPM_BUILD_ROOT%{_localstatedir}/cache/openafs
 %endif
 
 %post client
-%if !0%{?_with_systemd}
+%if 0%{?_with_systemd}
   %systemd_post openafs-client.service
 %endif
 # if this is owned by the package, upgrades with afs running can't work
@@ -285,7 +285,7 @@ fi
 exit 0
 
 %post server
-%if !0%{?_with_systemd}
+%if 0%{?_with_systemd}
   %systemd_post openafs-server.service
 %endif
 
@@ -453,6 +453,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Thu Feb 21 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-2
+- Use newer tarball for 1.6.2 final
+- Fix conditional for %systemd_post on Fedora 17 (RPM Fusion bug #2687)
+
 * Thu Feb 14 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-1
 - Update to OpenAFS 1.6.2 final
 - Explicitly BR pod2man (Fedora 19 has split this out)
