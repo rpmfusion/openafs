@@ -1,0 +1,167 @@
+commit 79c55b4a9a7714024a881d47ddf4cbdba8e2ec84
+Author: Ken Dreyer <ktdreyer@ktdreyer.com>
+Date:   Tue Apr 30 21:59:32 2013 -0600
+
+    doc: quote list items in POD
+    
+    Recent versions of Pod::Simple complain if we use integers or other
+    special characters in an =item list. We have a couple bulleted lists
+    that happen to have integers or other special characters as the list
+    values. Quote the items with C<> so that Pod::Simple can correctly parse
+    them again.
+    
+    Change-Id: If456781fe219b73ae01feb9aef2fb2639e097534
+
+diff --git a/doc/man-pages/pod1/aklog.pod b/doc/man-pages/pod1/aklog.pod
+index c0892ca..b7240d1 100644
+--- a/doc/man-pages/pod1/aklog.pod
++++ b/doc/man-pages/pod1/aklog.pod
+@@ -186,39 +186,39 @@ The exit status of B<aklog> will be one of the following:
+ 
+ =over 3
+ 
+-=item 0
++=item C<0>
+ 
+ Success -- No error occurred.
+ 
+-=item 1
++=item C<1>
+ 
+ Usage -- Bad command syntax; accompanied by a usage message.
+ 
+-=item 2
++=item C<2>
+ 
+ Something failed -- More than one cell or pathname was given on the
+ command line and at least one failure occurred.  A more specific error
+ status is returned when only one directive is given.
+ 
+-=item 3
++=item C<3>
+ 
+ AFS -- Unable to get AFS configuration or unable to get information about
+ a specific cell.
+ 
+-=item 4
++=item C<4>
+ 
+ Kerberos -- Unable to get tickets for authentication.
+ 
+-=item 5
++=item C<5>
+ 
+ Token -- Unable to get tokens.
+ 
+-=item 6
++=item C<6>
+ 
+ Bad pathname -- The path given was not a directory or lstat(2) failed on
+ some component of the pathname.
+ 
+-=item 7
++=item C<7>
+ 
+ Miscellaneous -- An internal failure occurred.  For example, B<aklog>
+ returns this if it runs out of memory.
+diff --git a/doc/man-pages/pod1/xstat_cm_test.pod b/doc/man-pages/pod1/xstat_cm_test.pod
+index 5943133..06d67af 100644
+--- a/doc/man-pages/pod1/xstat_cm_test.pod
++++ b/doc/man-pages/pod1/xstat_cm_test.pod
+@@ -54,19 +54,19 @@ There are three acceptable values:
+ 
+ =over 4
+ 
+-=item 0
++=item C<0>
+ 
+ Provides profiling information about the numbers of times different
+ internal Cache Manager routines were called since the Cache Manager
+ started.
+ 
+-=item 1
++=item C<1>
+ 
+ Reports various internal performance statistics related to the Cache
+ Manager (for example, statistics about how effectively the cache is being
+ used and the quantity of intracell and intercell data access).
+ 
+-=item 2
++=item C<2>
+ 
+ Reports all of the internal performance statistics provided by the C<1>
+ setting, plus some additional, detailed performance figures (for example,
+diff --git a/doc/man-pages/pod1/xstat_fs_test.pod b/doc/man-pages/pod1/xstat_fs_test.pod
+index 6d99702..7c2257d 100644
+--- a/doc/man-pages/pod1/xstat_fs_test.pod
++++ b/doc/man-pages/pod1/xstat_fs_test.pod
+@@ -52,25 +52,25 @@ There are four acceptable values:
+ 
+ =over 4
+ 
+-=item 0
++=item C<0>
+ 
+ Provides profiling information about the numbers of times different
+ internal File Server routines were called since the File Server
+ started. This value is not currently implemented; it returns no data.
+ 
+-=item 1
++=item C<1>
+ 
+ Reports various internal performance statistics related to the File Server
+ (for example, vnode cache entries and Rx protocol activity).
+ 
+-=item 2
++=item C<2>
+ 
+ Reports all of the internal performance statistics provided by the C<1>
+ setting, plus some additional, detailed performance figures about the File
+ Server (for example, minimum, maximum, and cumulative statistics regarding
+ File Server RPCs, how long they take to complete, and how many succeed).
+ 
+-=item 3
++=item C<3>
+ 
+ Reports File Server callback processing statistics since the File Server
+ started, including the number of call of callbacks added (AddCallBack), the
+diff --git a/doc/man-pages/pod8/backup_addvolentry.pod b/doc/man-pages/pod8/backup_addvolentry.pod
+index bcd762d..6151cb8 100644
+--- a/doc/man-pages/pod8/backup_addvolentry.pod
++++ b/doc/man-pages/pod8/backup_addvolentry.pod
+@@ -90,30 +90,30 @@ expressions:
+ 
+ =over 4
+ 
+-=item .
++=item C<.>
+ 
+ The period matches any single character.
+ 
+-=item *
++=item C<*>
+ 
+ The asterisk matches zero or more instances of the preceding character.
+ Combine it with any other alphanumeric character or metacharacter.
+ 
+-=item [ ]
++=item C<[ ]>
+ 
+ Square brackets around a list of characters match a single instance of any
+ of the characters, but no other characters; for example, C<[abc]> matches
+ a single C<a> or C<b> or C<c>, but not C<d> or C<A>. This expression can
+ be combined with the asterisk.
+ 
+-=item ^
++=item C<^>
+ 
+ The caret, when used as the first character in a square-bracketed set,
+ designates a match with any single character I<except> the characters that
+ follow it; for example, C<[^a]> matches any single character except
+ lowercase C<a>. This expression can be combined with the asterisk.
+ 
+-=item \
++=item C<\>
+ 
+ A backslash preceding any of the metacharacters in this list makes it
+ match its literal value only. For example, the expression C<\.> (backslash

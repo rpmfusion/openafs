@@ -13,7 +13,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.2.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -47,6 +47,10 @@ Patch3:        openafs-1.6.1-systemd-fhs.patch
 Patch4:        openafs-1.6.1-systemd-env-vars.patch
 # Add ExecPostStart "sysnames" helper script.
 Patch5:        openafs-1.6.1-systemd-execpoststart.patch
+
+# Support newer Pod::Simple
+# http://gerrit.openafs.org/9838
+Patch6:        openafs-1.6.2-pod.patch
 
 # Use systemd unit files on Fedora 18 and above.
 %if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
@@ -138,6 +142,9 @@ Cell.
 %patch3 -p1 -b .fhs
 %patch4 -p1 -b .envvars
 %patch5 -p1 -b .execpoststart
+
+# Support newer Pod::Simple
+%patch6 -p1
 
 # Convert the licese to UTF-8
 mv src/LICENSE src/LICENSE~
@@ -453,6 +460,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed May 01 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2.1-2
+- Patch for newer Pod::Simple (http://gerrit.openafs.org/9838)
+
 * Tue Apr 30 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2.1-1
 - Update to OpenAFS 1.6.2.1
 
