@@ -12,8 +12,8 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.2
-Release:        2%{?dist}
+Version:        1.6.2.1
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -453,9 +453,12 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Tue Apr 30 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2.1-1
+- Update to OpenAFS 1.6.2.1
+
 * Thu Feb 21 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-2
 - Use newer tarball for 1.6.2 final
-- Fix conditional for %systemd_post on Fedora 17 (RPM Fusion bug #2687)
+- Fix conditional for %%systemd_post on Fedora 17 (RPM Fusion bug #2687)
 
 * Thu Feb 14 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2-1
 - Update to OpenAFS 1.6.2 final
