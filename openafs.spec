@@ -10,9 +10,15 @@
 %define sysname amd64_linux26
 %endif
 
+# Use systemd unit files on Fedora 18 and above.
+%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
+  %global _with_systemd 1
+%endif
+
+
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.2.1
+Version:        1.6.5
 Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
@@ -35,6 +41,9 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  krb5-devel, pam-devel, ncurses-devel, flex, byacc, bison
 BuildRequires:  automake, autoconf
 BuildRequires:  %{_bindir}/pod2man
+%if 0%{?_with_systemd}
+BuildRequires: systemd-units
+%endif
 
 Patch0:         openafs-1.6.0-fPIC.patch
 # systemd: Skip CellServDB manipulation
@@ -47,11 +56,6 @@ Patch3:        openafs-1.6.1-systemd-fhs.patch
 Patch4:        openafs-1.6.1-systemd-env-vars.patch
 # Add ExecPostStart "sysnames" helper script.
 Patch5:        openafs-1.6.1-systemd-execpoststart.patch
-
-# Use systemd unit files on Fedora 18 and above.
-%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
-  %global _with_systemd 1
-%endif
 
 
 %description
@@ -453,6 +457,17 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Jul 24 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.5-1
+- Update to OpenAFS 1.6.5
+
+* Wed Jul 03 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.4-1
+- Update to OpenAFS 1.6.4
+- Drop upstreamed POD patch (http://gerrit.openafs.org/9842)
+- BR systemd-units to get the _unitdir RPM macro
+
+* Wed May 01 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2.1-2
+- Patch for newer Pod::Simple (http://gerrit.openafs.org/9838)
+
 * Tue Apr 30 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.2.1-1
 - Update to OpenAFS 1.6.2.1
 
