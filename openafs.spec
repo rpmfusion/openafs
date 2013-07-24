@@ -18,7 +18,7 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.4
+Version:        1.6.5
 Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
@@ -457,6 +457,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Jul 24 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.5-1
+- Update to OpenAFS 1.6.5
+
 * Wed Jul 03 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.4-1
 - Update to OpenAFS 1.6.4
 - Drop upstreamed POD patch (http://gerrit.openafs.org/9842)
