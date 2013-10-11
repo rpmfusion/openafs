@@ -18,8 +18,8 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.5
-Release:        1%{?dist}.1
+Version:        1.6.5.1
+Release:        1%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -362,10 +362,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_bindir}/restorevol
 %{_bindir}/tokens
 %{_bindir}/tokens.krb
+%{_bindir}/translate_et
 %{_bindir}/udebug
 %{_bindir}/unlog
 %{_bindir}/up
-%{_bindir}/translate_et
 %{_sbindir}/afsbackup
 %{_sbindir}/butc
 %{_sbindir}/fstrace
@@ -432,8 +432,8 @@ rm -fr $RPM_BUILD_ROOT
 %{_sbindir}/vlclient
 %{_sbindir}/vldb_check
 %{_sbindir}/vldb_convert
-%{_sbindir}/volinfo
 %{_sbindir}/voldump
+%{_sbindir}/volinfo
 %{_sbindir}/bos_util
 %{_sbindir}/kadb_check
 %{_sbindir}/ka-forwarder
@@ -443,8 +443,8 @@ rm -fr $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root)
-%{_bindir}/rxgen
 %{_bindir}/afs_compile_et
+%{_bindir}/rxgen
 %{_includedir}/afs
 %{_includedir}/rx
 %{_includedir}/*.h
@@ -457,8 +457,8 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
-* Wed Jul 31 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.6.5-1.1
-- Rebuilt
+* Fri Oct 11 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.5.1-1
+- Update to OpenAFS 1.6.5.1
 
 * Wed Jul 24 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.5-1
 - Update to OpenAFS 1.6.5
