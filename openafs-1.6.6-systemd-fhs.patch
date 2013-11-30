@@ -1,4 +1,4 @@
-From 5c440cbf1c57bb22e7ebbeaf164f52e68377252f Mon Sep 17 00:00:00 2001
+From 742dce0406b45643f29bae44c4cb7c51f58e4fbd Mon Sep 17 00:00:00 2001
 From: Ken Dreyer <ktdreyer@ktdreyer.com>
 Date: Mon, 8 Oct 2012 20:58:13 -0600
 Subject: [PATCH 3/5] systemd: use FHS-style paths
@@ -29,18 +29,18 @@ index a5fb287..89a344f 100644
  KillMode=none
  
 diff --git a/src/packaging/RedHat/openafs-server.service b/src/packaging/RedHat/openafs-server.service
-index 2d34bb0..6f6a26f 100644
+index ac9d3c4..d8904bf 100644
 --- a/src/packaging/RedHat/openafs-server.service
 +++ b/src/packaging/RedHat/openafs-server.service
 @@ -4,7 +4,7 @@ After=syslog.target network.target
  
  [Service]
  EnvironmentFile=-/etc/sysconfig/openafs
--ExecStart=/usr/afs/bin/bosserver $BOSSERVER_ARGS
-+ExecStart=/usr/sbin/bosserver $BOSSERVER_ARGS
+-ExecStart=/usr/afs/bin/bosserver -nofork $BOSSERVER_ARGS
++ExecStart=/usr/sbin/bosserver -nofork $BOSSERVER_ARGS
  ExecStop=/usr/bin/bos shutdown localhost -wait -localauth
  
  [Install]
 -- 
-1.7.11.7
+1.8.3.1
 

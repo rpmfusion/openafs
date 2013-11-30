@@ -1,4 +1,4 @@
-From 9ed4e76885f2a315586bf32b3106de86c32c5daa Mon Sep 17 00:00:00 2001
+From 11884d0f9747ea89c1d77fa12c90f174ff4e60c0 Mon Sep 17 00:00:00 2001
 From: Ken Dreyer <ktdreyer@ktdreyer.com>
 Date: Mon, 8 Oct 2012 20:55:12 -0600
 Subject: [PATCH 1/5] systemd: skip CellServDB manipulation
@@ -22,5 +22,5 @@ index 936762e..2ee652a 100644
  ExecStart=/usr/vice/etc/afsd $AFSD_ARGS
  ExecStop=/bin/umount /afs
 -- 
-1.7.11.7
+1.8.3.1
 

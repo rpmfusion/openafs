@@ -10,6 +10,8 @@
 %define sysname amd64_linux26
 %endif
 
+%define pre pre1
+
 # Use systemd unit files on Fedora 18 and above.
 %if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
   %global _with_systemd 1
@@ -18,13 +20,13 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.5.1
-Release:        1%{?dist}
+Version:        1.6.6
+Release:        0.%{pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-Source0:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-src.tar.bz2
-Source1:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-doc.tar.bz2
+Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
+Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
 Source11:       http://grand.central.org/dl/cellservdb/CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -47,15 +49,15 @@ BuildRequires: systemd-units
 
 Patch0:         openafs-1.6.0-fPIC.patch
 # systemd: Skip CellServDB manipulation
-Patch1:        openafs-1.6.1-systemd-no-cellservdb.patch
+Patch1:        openafs-1.6.6-systemd-no-cellservdb.patch
 # systemd: unload the proper kernel module
-Patch2:        openafs-1.6.1-systemd-kmod-name.patch
+Patch2:        openafs-1.6.6-systemd-kmod-name.patch
 # systemd: use FHS-style paths instead of transarc paths
-Patch3:        openafs-1.6.1-systemd-fhs.patch
+Patch3:        openafs-1.6.6-systemd-fhs.patch
 # systemd: add additional user-friendly environment vars
-Patch4:        openafs-1.6.1-systemd-env-vars.patch
+Patch4:        openafs-1.6.6-systemd-env-vars.patch
 # Add ExecPostStart "sysnames" helper script.
-Patch5:        openafs-1.6.1-systemd-execpoststart.patch
+Patch5:        openafs-1.6.6-systemd-execpoststart.patch
 
 
 %description
@@ -131,7 +133,7 @@ This package provides basic server support to host files in an AFS
 Cell.
 
 %prep
-%setup -q -b 1 -n openafs-%{version}
+%setup -q -b 1 -n openafs-%{version}%{pre}
 
 # This changes osconf.m4 to build with -fPIC on i386 and x86_64
 %patch0
@@ -457,6 +459,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Sat Nov 30 2013 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.6-0.pre1
+- Update to OpenAFS 1.6.6pre1
+- Rebase systemd patches to 1.6.6
+
 * Fri Oct 11 2013 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.5.1-1
 - Update to OpenAFS 1.6.5.1
 

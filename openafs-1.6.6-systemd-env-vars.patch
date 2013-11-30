@@ -1,4 +1,4 @@
-From 1e9b8058d1da1ebde09cd280cf441a4af56e254a Mon Sep 17 00:00:00 2001
+From 744d9017d28a50b9f9956c245dcdd03bbb49b4ef Mon Sep 17 00:00:00 2001
 From: Ken Dreyer <ktdreyer@ktdreyer.com>
 Date: Mon, 8 Oct 2012 20:59:43 -0600
 Subject: [PATCH 4/5] systemd: add more environment variables to
@@ -26,5 +26,5 @@ index 89a344f..719aed77 100644
  ExecStop=/usr/sbin/afsd -shutdown
  ExecStop=/sbin/rmmod libafs
 -- 
-1.7.11.7
+1.8.3.1
 
