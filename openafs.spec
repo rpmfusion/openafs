@@ -21,7 +21,7 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.6
-Release:        0.%{pre}%{?dist}
+Release:        0.%{pre}%{?dist}.1
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
@@ -459,6 +459,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Tue Dec 03 2013 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.6-0.pre1.1
+- Fix ExecPostStart patch
+
 * Sat Nov 30 2013 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.6-0.pre1
 - Update to OpenAFS 1.6.6pre1
 - Rebase systemd patches to 1.6.6
