@@ -10,10 +10,11 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre1
+#define pre pre1
+%define pre %nil
 
-# Use systemd unit files on Fedora 18 and above.
-%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
+# Use systemd unit files on RHEL 7 and above.
+%if 0%{?rhel} >= 7
   %global _with_systemd 1
 %endif
 
@@ -21,12 +22,21 @@
 Summary:        Enterprise Network File System
 Name:           openafs
 Version:        1.6.6
-Release:        0.%{pre}%{?dist}.1
+%if 0%{?pre}
+Release:        0.%{pre}%{?dist}
+%else
+Release:        1%{?dist}
+%endif
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
+%if 0%{?pre}
 Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
 Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
+%else
+Source0:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-src.tar.bz2
+Source1:        http://dl.openafs.org/dl/%{version}/%{name}-%{version}-doc.tar.bz2
+%endif
 Source11:       http://grand.central.org/dl/cellservdb/CellServDB
 Source12:       cacheinfo
 Source13:       openafs.init
@@ -459,6 +469,11 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Jan 22 2014 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.6-1
+- Update to OpenAFS 1.6.6 final
+- Drop Fedora 18 conditional
+- Correct bogus dates in changelog
+
 * Tue Dec 03 2013 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.6-0.pre1.1
 - Fix ExecPostStart patch
 
@@ -504,7 +519,7 @@ rm -fr $RPM_BUILD_ROOT
 * Tue Dec 11 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-9
 - Correct bosserver path in systemd unit file
 
-* Wed Nov 08 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-8
+* Thu Nov 08 2012 Jack Neely <jjneely@ncsu.edu> 0:1.6.1-8
 - Implement a directory for sourced post init scripts.  These
   fine tune the AFS client's behavior after startup and live in
   /etc/openafs/posthooks.d/
@@ -529,7 +544,7 @@ rm -fr $RPM_BUILD_ROOT
 - Patch to allow fileservers to report correct partition
   usage data on partitions sizes greater than 2TB.
 
-* Mon May 01 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-2
+* Tue May 01 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-2
 - Provide openafs-static (RPM Fusion bug #2310).
 
 * Wed Apr 04 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-1
@@ -551,7 +566,7 @@ rm -fr $RPM_BUILD_ROOT
 * Wed Mar 07 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre4
 - Update to OpenAFS 1.6.1 pre-release 4
 
-* Wed Feb 28 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre3
+* Tue Feb 28 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre3
 - Update to OpenAFS 1.6.1 pre-release 3
 
 * Wed Feb 08 2012 Ken Dreyer <ktdreyer@ktdreyer.com> 0:1.6.1-0.pre2
@@ -620,7 +635,7 @@ rm -fr $RPM_BUILD_ROOT
 * Thu Jul 15 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-4
 - RPMFusion Bug #1333
 
-* Tue Jun 30 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-3
+* Wed Jun 30 2010 Jack Neely <jjneely@ncsu.edu> 0:1.4.12.1-3
 - Correct rpmlint warnings
 - RPMFusion Bug #1047 - Fix SELinux contexts on /afs
 - RPMFusion Bug #1275 - service openafs status now sets the exit code
@@ -684,7 +699,7 @@ rm -fr $RPM_BUILD_ROOT
 - init.d file as well as sysconfig file rename afs => openafs
 - Prereq/Require cleanups
 
-* Thu May 16 2008 Jack Neely <jjneely@ncsu.edu> 1.4.6-7
+* Fri May 16 2008 Jack Neely <jjneely@ncsu.edu> 1.4.6-7
 - Include the AFS version of asetkey
 - Build with --with-krb5-conf which enables aklog and asetkey's builds
 
@@ -700,7 +715,7 @@ rm -fr $RPM_BUILD_ROOT
 * Tue Feb 12 2008 Jack Neely <jjneely@ncsu.edu> 1.4.6-1
 - OpenAFS 1.4.6
 
-* Mon Jul 11 2007 Jack Neely <jjneely@ncsu.edu> 1.4.4-3
+* Wed Jul 11 2007 Jack Neely <jjneely@ncsu.edu> 1.4.4-3
 - RHEL 5 does not include the krbafs-utils package and we require
   the pagsh program.
 
@@ -760,11 +775,11 @@ rm -fr $RPM_BUILD_ROOT
 * Wed May 08 2002 Jack Neely <jjneely@pams.ncsu.edu>
 - rebuilt on 2.4.18-3
 
-* Fri Mar 21 2002 Jack Neely <slack@quackmaster.net>
+* Thu Mar 21 2002 Jack Neely <slack@quackmaster.net>
 - upgraded to openafs-1.2.3
 - rebuilt on 2.4.18-0.4
 
-* Thu Mar 13 2002 Jack Neely <slack@quackmaster.net>
+* Wed Mar 13 2002 Jack Neely <slack@quackmaster.net>
 - rebuild on 2.4.9-31
 - Added kernel depend on the kernel package
 
