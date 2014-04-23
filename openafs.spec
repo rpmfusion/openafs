@@ -21,7 +21,7 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.6
+Version:        1.6.7
 %if 0%{?pre}
 Release:        0.%{pre}%{?dist}
 %else
@@ -469,6 +469,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Tue Apr 22 2014 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.7-1
+- Update to OpenAFS 1.6.7 final
+
 * Wed Jan 22 2014 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.6-1
 - Update to OpenAFS 1.6.6 final
 - Drop Fedora 18 conditional
