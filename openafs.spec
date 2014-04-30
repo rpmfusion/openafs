@@ -10,27 +10,23 @@
 %define sysname amd64_linux26
 %endif
 
-#define pre pre1
-%define pre %nil
+%define pre pre2
+#define pre %nil
 
 # Use systemd unit files on RHEL 7 and above.
-%if 0%{?rhel} >= 7
+%if 0%{fedora} || 0%{?rhel} >= 7
   %global _with_systemd 1
 %endif
 
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.7
-%if 0%{?pre}
-Release:        0.%{pre}%{?dist}
-%else
-Release:        1%{?dist}
-%endif
+Version:        1.6.8
+Release:        %{?pre:0.}1%{?pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
 URL:            http://www.openafs.org
-%if 0%{?pre}
+%if %{?pre:1}
 Source0:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-src.tar.bz2
 Source1:        http://dl.openafs.org/dl/candidate/%{version}%{pre}/%{name}-%{version}%{pre}-doc.tar.bz2
 %else
@@ -469,6 +465,10 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Wed Apr 30 2014 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.8-0.1pre2
+- Update to OpenAFS 1.6.8pre2
+- Fix systemd conditional
+
 * Tue Apr 22 2014 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.7-1
 - Update to OpenAFS 1.6.7 final
 
