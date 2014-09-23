@@ -10,7 +10,7 @@
 %define sysname amd64_linux26
 %endif
 
-%define pre pre2
+%define pre pre1
 #define pre %nil
 
 # Use systemd unit files on RHEL 7 and above.
@@ -21,7 +21,7 @@
 
 Summary:        Enterprise Network File System
 Name:           openafs
-Version:        1.6.8
+Version:        1.6.10
 Release:        %{?pre:0.}1%{?pre}%{?dist}
 License:        IBM
 Group:          System Environment/Daemons
@@ -442,6 +442,7 @@ rm -fr $RPM_BUILD_ROOT
 %{_sbindir}/vldb_convert
 %{_sbindir}/voldump
 %{_sbindir}/volinfo
+%{_sbindir}/volscan
 %{_sbindir}/bos_util
 %{_sbindir}/kadb_check
 %{_sbindir}/ka-forwarder
@@ -465,6 +466,9 @@ rm -fr $RPM_BUILD_ROOT
 %{_datadir}/openafs/C/afszcm.cat
 
 %changelog
+* Tue Sep 23 2014 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.10-0.1pre1
+- Update to OpenAFS 1.6.10pre1
+
 * Wed Apr 30 2014 Ken Dreyer <ktdreyer@ktdreyer.com> - 1.6.8-0.1pre2
 - Update to OpenAFS 1.6.8pre2
 - Fix systemd conditional
